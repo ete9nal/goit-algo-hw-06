@@ -9,7 +9,7 @@ class Field:
 
 class Name(Field):
     def __init__(self, value):
-        self.value = value
+        super().__init__(value)
 
 class Phone(Field):
     def __init__(self, value):
@@ -27,40 +27,18 @@ class Record:
     # метод для додавання обʼєктів Phone
     def add_phone(self, phone):
           self.phones.append(Phone(phone))
-          return f"Phone {phone} added to contact {self.name}"
 
     # метод для видалення обʼєктів Phone
-    # def remove_phone(self, phone):
-    #     if phone in [p.value for p in self.phones]:
-    #         self.phones = [p for p in self.phones if p.value != phone]
-    #         return f'Phone {phone} removed from contact {self.name}'
-    #     else:
-    #         return f'Phone {phone} not found for contact {self.name}'
-        
     def remove_phone(self, phone):
-        if self.find_phone(phone) and phone.isdigit():
-            self.phones = [p for p in self.phones if p.value != phone]
-            return phone
-        else:
-            raise ValueError(f'Phone {phone} not found')
-
-    # метод для зміни обʼєкту Phone
-    # def edit_phone(self, old, new):
-    #     for p in self.phones:
-    #         if p.value == old:
-    #             p.value = new
-    #             return f'Phone {old} changed to {new}'
-    #     raise ValueError(f'Phone {old} not found')
+        p = self.find_phone(phone)
+        if p:
+            self.phones.remove(p)
     
+    # метод для зміни обʼєкту Phone
     def edit_phone(self, old, new):
         if self.find_phone(old):
-            if new.isdigit():
-                new = old
-                return new
-            else:
-                raise ValueError(f'Phone {new} must be 10 digits only')
-        else:
-            raise ValueError(f'Phone {old} not found')
+            self.remove_phone(old)
+            self.add_phone(new)
 
     # метод для пошуку обʼєкту Phone
     def find_phone(self, phone):
@@ -95,7 +73,7 @@ class AddressBook(UserDict):
         result = ""
         for record in self.data.values():
             phones_str = "; ".join(p.value for p in record.phones)
-            result = f"Contact name: {record.name.value}, phones: {phones_str}\n"
+            result += f"Contact name: {record.name.value}, phones: {phones_str}\n"
         return result.strip()
     
 
@@ -122,7 +100,7 @@ print(book)
 
 # Знаходження та редагування телефону для John
 john = book.find("John")
-john.edit_phone("1234567890", "asdadsa")
+john.edit_phone("1234567890", "1112223333")
 
 print(john)  # Виведення: Contact name: John, phones: 1112223333; 5555555555
 
